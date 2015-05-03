@@ -113,7 +113,7 @@ begin
 
   player_cards = []
   dealer_cards = []
-  
+
   begin
     deal_card(deck, player_cards)
     deal_card(deck, dealer_cards)
@@ -126,7 +126,16 @@ begin
   print "#{puts player_cards}"
   puts "#{player_name}'s Total: #{card_total(player_cards)}"
 
-  choice = hit_or_stay(choice)
+  if card_total(player_cards) == BLACKJACK
+    winner("#{player_name}", 'Dealer', 'blackjack')
+    declare_winner("#{player_name}")
+    in_play = end_game(in_play)
+    next
+  end
+
+  if in_play != 'y'
+    choice = hit_or_stay(choice)
+  end
 
   while choice == 'hit'
     deal_card(deck, player_cards)
@@ -141,7 +150,7 @@ begin
       in_play = end_game(in_play)
       break
     elsif card_total(player_cards) == BLACKJACK
-      winner("#{player_name}", 'Dealer', blackjack)
+      winner("#{player_name}", 'Dealer', 'blackjack')
       declare_winner("#{player_name}")
       in_play = end_game(in_play)
       break
@@ -149,11 +158,17 @@ begin
     choice = hit_or_stay(choice)
   end 
 
+  if in_play != 'y'
+    say "Dealer flipped a #{dealer_cards[1]}"
+    puts "Dealer's Total: #{card_total(dealer_cards)}"
+    sleep 1.5
+    if card_total(dealer_cards) == BLACKJACK
+      winner('Dealer', "#{player_name}", 'blackjack')
+      declare_winner('Dealer')
+      in_play = end_game(in_play)
+    end
+  end
 
-
-  say "Dealer flipped a #{dealer_cards[1]}"
-  puts "Dealer's Total: #{card_total(dealer_cards)}"
-   
   while card_total(dealer_cards) < DEALER_MUST_HIT && in_play != 'y'
     deal_card(deck, dealer_cards)
     say "Dealer hits" 
